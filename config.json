@@ -1,8 +1,3 @@
 {
-  "generator_url": "https://perchance.org/ai-text-to-image-generator",
-  "image_selector": "img",
-  "button_selector": "#randomize-button",
-  "caption": "Check out this AI-generated image!",
-  "wait_time": 2000,
   "log_level": "INFO"
 }

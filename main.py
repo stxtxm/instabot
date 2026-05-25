@@ -1,51 +1,32 @@
-import json
 import logging
-from perchance_scrapper import generate_image
-from instagram_poster import post_to_instagram
 import os
+from generator import generate_prompt, generate_image, generate_caption
+from publisher import post_to_facebook
 
-# Load Configuration
-with open("config.json", "r") as f:
-    config = json.load(f)
-
-# Configure logging
-LOG_LEVEL = config.get("log_level", "INFO").upper()
-logging.basicConfig(level=getattr(logging, LOG_LEVEL), format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
-# Configuration
-IMAGE_URL = config.get("generator_url")
-SELECTOR = config.get("image_selector")
-BUTTON_SELECTOR = config.get("button_selector")
-WAIT_TIME = config.get("wait_time", 2000) # Default wait time of 2 seconds
-IMAGE_PATH = "generated_image.png"
-CAPTION = config.get("caption")
+IMAGE = "generated_image.png"
 
 def main():
-    logger.info(f"Generating image from {IMAGE_URL}...")
-    # Add retry logic
-    success = False
+    prompt = generate_prompt()
+
     for i in range(3):
-        if generate_image(IMAGE_URL, IMAGE_PATH, selector=SELECTOR, button_selector=BUTTON_SELECTOR, wait_time=WAIT_TIME):
-            success = True
+        if generate_image(prompt, IMAGE):
             break
-        logger.warning(f"Retrying generation... ({i+1}/3)")
-
-    if not success:
-        logger.error("Failed to generate image after retries. Exiting.")
-        return
+        logger.warning(f"Retry {i+1}/3")
+    else:
+        logger.error("Failed to generate image")
         return
 
-    # logger.info("Posting to Instagram...")
-    # if not post_to_instagram(IMAGE_PATH, CAPTION):
-    #     logger.error("Failed to post to Instagram.")
-    #     # We don't remove the image here, maybe we want to keep it
-    #     return
-    
-    # Clean up
-    if os.path.exists(IMAGE_PATH):
-        os.remove(IMAGE_PATH)
-    logger.info("Done.")
+    caption = generate_caption(prompt)
+
+    if post_to_facebook(IMAGE, caption):
+        if os.path.exists(IMAGE):
+            os.remove(IMAGE)
+        logger.info("Done")
+    else:
+        logger.error("Failed to post")
 
 if __name__ == "__main__":
     main()

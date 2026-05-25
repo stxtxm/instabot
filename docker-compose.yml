@@ -1,0 +1,11 @@
+services:
+  instabot:
+    build: .
+    container_name: instabot
+    volumes:
+      - ./output:/app/output
+      - ./config.json:/app/config.json
+    environment:
+      - FACEBOOK_PAGE_ID=${FACEBOOK_PAGE_ID}
+      - FACEBOOK_PAGE_TOKEN=${FACEBOOK_PAGE_TOKEN}
+    restart: unless-stopped

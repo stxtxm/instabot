@@ -1,3 +1,2 @@
-instagrapi
-playwright
+requests
 python-dotenv

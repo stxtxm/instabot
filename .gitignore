@@ -1,5 +1,7 @@
 venv/
 .env
-session.json
 __pycache__/
 *.png
+*.egg-info/
+dist/
+build/

@@ -1,38 +1,31 @@
-# Perchance Instagram Bot
+# Instabot
 
-This project automates the process of scraping images from a [Perchance](https://perchance.org) generator and posting them to Instagram.
+Generates unique AI images with French captions and posts them to a Facebook page every 2 hours.
 
-## Prerequisites
+## How it works
 
-- Python 3.x
-- `playwright` (with browser drivers)
-- `instagrapi`
+1. **Prompt** – AI generates a random creative image prompt via Pollinations text API
+2. **Image** – generated from that prompt via Pollinations image API
+3. **Caption** – AI writes a poetic French caption describing the image
+4. **Post** – published to your Facebook page via Graph API
+
+Every run produces unique content.
 
 ## Setup
 
-1. Create a virtual environment and install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   playwright install chromium
-   ```
-2. Create a `.env` file with your Instagram credentials:
-   ```env
-   INSTA_USERNAME=your_username
-   INSTA_PASSWORD=your_password
-   ```
-3. Configure the generator settings in `config.json`:
-   ```json
-   {
-     "generator_url": "https://perchance.org/ai-text-to-image-generator",
-     "image_selector": "img",
-     "button_selector": "#randomize-button",
-     "caption": "Check out this AI-generated image!"
-   }
-   ```
-
-## Usage
-
-Run the bot:
-```bash
-python main.py
+Copy `.env.example` to `.env` and fill in your credentials:
 ```
+FACEBOOK_PAGE_ID=your_page_id
+FACEBOOK_PAGE_TOKEN=your_page_access_token
+```
+*(Token needs `pages_manage_posts` permission, valid ~60 days)*
+
+## Run
+
+```bash
+docker compose up -d
+```
+
+## Cron
+
+The container loops continuously: generates a post, then waits 1h-3h (random) before the next one.
